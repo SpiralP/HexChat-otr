@@ -1,6 +1,6 @@
 __module_name__ = 'myotr'
 __module_author__ = 'SpiralP'
-__module_version__ = '1'
+__module_version__ = '$Id$'
 __module_description__ = 'OTR for HexChat'
 
 import sys
