@@ -12,6 +12,7 @@ import urllib2
 import hexchat
 import potr
 
+GIT_URL='https://github.com/SpiralP/HexChat-otr'
 UPDATE_URL='https://api.github.com/repos/SpiralP/HexChat-otr/git/refs'
 
 CONFIG_DIR=hexchat.get_info('configdir')
@@ -141,8 +142,9 @@ def updateCheck():
 		
 		updateAvailable = (newVersion!=__module_version__)
 		if updateAvailable:
-			success('New Update Available! ( %s )' % newVersion)
-		
+			success('New Update Available! ( %s ) Get it from: %s' % (newVersion, UNDERLINE+BLUE+GIT_URL))
+		else:
+			info('Your version of %s is up to date!' % __module_name__)
 		
 		
 		
