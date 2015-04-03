@@ -8,6 +8,7 @@ import os
 
 import urllib2
 import hashlib
+import time
 
 import hexchat
 import potr
@@ -119,7 +120,7 @@ def updateCheck():
 		updateChecked=True
 		
 		try:
-			http = urllib2.urlopen(REMOTE_FILE)
+			http = urllib2.urlopen(REMOTE_FILE+'?'+time.time())
 		except:
 			warn('Error retrieving update data!')
 			return False
