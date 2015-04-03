@@ -120,7 +120,7 @@ def updateCheck():
 		updateChecked=True
 		
 		try:
-			http = urllib2.urlopen(REMOTE_FILE+'?'+time.time())
+			http = urllib2.urlopen(REMOTE_FILE+'?'+str(time.time()))
 		except:
 			warn('Error retrieving update data!')
 			return False
