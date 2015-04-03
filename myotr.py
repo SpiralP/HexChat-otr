@@ -1,19 +1,20 @@
 __module_name__ = 'myotr'
 __module_author__ = 'SpiralP'
-__module_version__ = ('$Id$')[5:-2]
+__module_version__ = '1'
 __module_description__ = 'OTR for HexChat'
 
 import sys
 import os
 
-import json
 import urllib2
+import hashlib
 
 import hexchat
 import potr
 
 GIT_URL='https://github.com/SpiralP/HexChat-otr'
-UPDATE_URL='https://api.github.com/repos/SpiralP/HexChat-otr/git/refs'
+REMOTE_FILE='https://raw.githubusercontent.com/SpiralP/HexChat-otr/master/myotr.py'
+STATUS_URL='https://api.github.com/repos/SpiralP/HexChat-otr/git/refs'
 
 CONFIG_DIR=hexchat.get_info('configdir')
 OTR_DIR=os.path.join(CONFIG_DIR, 'otr')
@@ -112,45 +113,44 @@ def say(who,msg):
 
 
 updateChecked=False
-newVersion=False
 def updateCheck():
-	global updateChecked, newVersion
+	global updateChecked
 	if not updateChecked:
 		updateChecked=True
 		
 		try:
-			http = urllib2.urlopen(UPDATE_URL)
+			http = urllib2.urlopen(REMOTE_FILE)
 		except:
 			warn('Error retrieving update data!')
 			return False
 		
-		try:
-			data = json.load(http)
-		except:
-			warn('Error decoding update data!')
-			http.close()
-			return False
-		
+		remotedata = http.read()
 		http.close()
 		
+		localpath = os.path.join(CONFIG_DIR,'addons')
+		localpath = os.path.join(localpath,'myotr.py')
+		
 		try:
-			newVersion = data[0]['object']['sha']
+			with open(localpath, 'rb') as file:
+				localdata = file.read()
 		except:
-			warn('Error reading update data!')
+			warn('Error reading local file!')
 			return False
+		file.close()
+		
+		remotehash = hashlib.sha1(remotedata).hexdigest()
+		localhash = hashlib.sha1(localdata).hexdigest()
 		
 		
-		updateAvailable = (newVersion!=__module_version__)
+		
+		updateAvailable = (remotehash!=localhash)
 		if updateAvailable:
-			success('New Update Available! ( %s ) Get it from: %s' % (newVersion, UNDERLINE+BLUE+GIT_URL))
+			success('New Update Available! Get it from: %s' % (UNDERLINE+BLUE+GIT_URL))
 		else:
 			info('Your version of %s is up to date!' % __module_name__)
 		
-		
-		
-		
-	
-	return newVersion
+		return True
+	return
 
 
 
@@ -390,7 +390,7 @@ def keypress(word, word_eol, userdata):
 
 def command_callback(word, word_eol, userdata):
 	
-	# updateCheck()
+	updateCheck()
 	
 	
 	
