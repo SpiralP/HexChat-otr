@@ -1,13 +1,18 @@
 __module_name__ = 'myotr'
 __module_author__ = 'SpiralP'
-__module_version__ = '$Id$'
+__module_version__ = ('$Id$')[5:-2]
 __module_description__ = 'OTR for HexChat'
 
 import sys
 import os
+
+import json
+import urllib2
+
 import hexchat
 import potr
 
+UPDATE_URL='https://api.github.com/repos/SpiralP/HexChat-otr/git/refs'
 
 CONFIG_DIR=hexchat.get_info('configdir')
 OTR_DIR=os.path.join(CONFIG_DIR, 'otr')
@@ -81,7 +86,15 @@ def first_instance(objs, Class):
 
 def getAccount(id=None):
 	if id is None:
-		id = hexchat.get_info('nick')+'@'+hexchat.get_info('network')
+		name = hexchat.get_info('nick')
+		if name is None:
+			return False
+		
+		network = hexchat.get_info('network')
+		if network is None:
+			return False
+		
+		id = name+'@'+network
 	
 	if id not in accounts:
 		hexchat.prnt(BLUE+'Creating new account for: %s' % id)
@@ -95,6 +108,47 @@ def say(who,msg):
 	for line in msg.split('\n'):
 		hexchat.command('PRIVMSG %s :%s' % (who,line))
 	return
+
+
+updateChecked=False
+newVersion=False
+def updateCheck():
+	global updateChecked, newVersion
+	if not updateChecked:
+		updateChecked=True
+		
+		try:
+			http = urllib2.urlopen(UPDATE_URL)
+		except:
+			warn('Error retrieving update data!')
+			return False
+		
+		try:
+			data = json.load(http)
+		except:
+			warn('Error decoding update data!')
+			http.close()
+			return False
+		
+		http.close()
+		
+		try:
+			newVersion = data[0]['object']['sha']
+		except:
+			warn('Error reading update data!')
+			return False
+		
+		
+		updateAvailable = (newVersion!=__module_version__)
+		if updateAvailable:
+			success('New Update Available! ( %s )' % newVersion)
+		
+		
+		
+		
+		
+	
+	return newVersion
 
 
 
@@ -136,7 +190,7 @@ class MyContext(potr.context.Context):
 				info('Fingerprint: %s' % str(self.getCurrentKey()))
 			
 			if bool(trust):
-				success('AUTHENTICATED AND STARTED')
+				success('AUTHENTICATED')
 			else:
 				warn('UNAUTHENTICATED!!!')
 			
@@ -269,10 +323,13 @@ def message_callback(word, word_eol, userdata):
 	msg = word[1]
 	
 	account = getAccount()
-	chan = getChannel()
-	if chan not in account.ctxs:
-		return
+	if not account:
+		return hexchat.EAT_NONE
 	
+	chan = getChannel()
+	
+	if chan not in account.ctxs:
+		return hexchat.EAT_NONE
 	context = account.getContext(chan) # or who? for channels?
 	
 	try: # TODO handle more things
@@ -306,7 +363,16 @@ def keypress(word, word_eol, userdata):
 	
 	
 	account = getAccount()
-	context = account.getContext(getChannel())
+	if not account:
+		return hexchat.EAT_NONE
+	
+	chan = getChannel()
+	
+	if chan not in account.ctxs:
+		return hexchat.EAT_NONE
+	
+	context = account.getContext(chan)
+	
 	if context.state==potr.context.STATE_ENCRYPTED:
 		hexchat.prnt(BLUE + '->' + msg)
 		context.sendMessage(0,msg)
@@ -321,7 +387,15 @@ def keypress(word, word_eol, userdata):
 
 
 def command_callback(word, word_eol, userdata):
+	
+	updateCheck()
+	
+	
+	
 	account = getAccount()
+	if not account:
+		return hexchat.EAT_NONE
+	
 	chan = getChannel()
 	
 	if chan not in account.ctxs:
@@ -415,5 +489,6 @@ hexchat.hook_print('Key Press',keypress)
 hexchat.hook_command('otr',command_callback)
 
 print('%s version %s loaded.' % (__module_name__,__module_version__))
+
 
 getAccount()
