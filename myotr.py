@@ -390,7 +390,7 @@ def keypress(word, word_eol, userdata):
 
 def command_callback(word, word_eol, userdata):
 	
-	updateCheck()
+	# updateCheck()
 	
 	
 	
