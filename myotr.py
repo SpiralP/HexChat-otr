@@ -351,8 +351,8 @@ def message_callback(word, word_eol, userdata):
 
 def keypress(word, word_eol, userdata):
 	key = word[0]
-	alt = word[1]
-	letter = word[2]
+	# alt = word[1]
+	# letter = word[2]
 	
 	if not(key=='65293'): # return key
 		return
