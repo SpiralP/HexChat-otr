@@ -1,4 +1,4 @@
-__module_name__ = 'myotr'
+__module_name__ = 'otr'
 __module_author__ = 'SpiralP'
 __module_version__ = '1'
 __module_description__ = 'OTR for HexChat'
@@ -14,7 +14,7 @@ import hexchat
 import potr
 
 GIT_URL='https://github.com/SpiralP/HexChat-otr'
-REMOTE_FILE='https://raw.githubusercontent.com/SpiralP/HexChat-otr/master/myotr.py'
+REMOTE_FILE='https://raw.githubusercontent.com/SpiralP/HexChat-otr/master/'+__module_name__+'.py'
 STATUS_URL='https://api.github.com/repos/SpiralP/HexChat-otr/git/refs'
 
 CONFIG_DIR=hexchat.get_info('configdir')
