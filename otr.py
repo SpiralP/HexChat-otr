@@ -302,6 +302,8 @@ class MyAccount(potr.context.Account):
 				if account == self.name:
 					info('trusting %s %s' % (fingerprint,trust))
 					self.setTrust(context, fingerprint, trust)
+			file.close()
+		
 		return
 	def saveTrusts(self):
 		info('Saving Trusts')
@@ -316,6 +318,7 @@ class MyAccount(potr.context.Account):
 						)
 					)
 					file.write('\n')
+			file.close()
 		
 		return
 
