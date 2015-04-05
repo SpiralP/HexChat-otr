@@ -17,8 +17,10 @@ GIT_URL='https://github.com/SpiralP/HexChat-otr'
 REMOTE_FILE='https://raw.githubusercontent.com/SpiralP/HexChat-otr/master/'+__module_name__+'.py'
 STATUS_URL='https://api.github.com/repos/SpiralP/HexChat-otr/git/refs'
 
-CONFIG_DIR=hexchat.get_info('configdir')
-OTR_DIR=os.path.join(CONFIG_DIR, 'otr')
+HEXCHAT_CONFIG_DIR=hexchat.get_info('configdir')
+HEXCHAT_ADDONS_DIR=os.path.join(HEXCHAT_CONFIG_DIR,'addons')
+
+OTR_DIR=os.path.join(HEXCHAT_CONFIG_DIR, 'otr')
 
 CLEAR='\017'
 BOLD='\002'
@@ -128,8 +130,7 @@ def updateCheck():
 		remotedata = http.read()
 		http.close()
 		
-		localpath = os.path.join(CONFIG_DIR,'addons')
-		localpath = os.path.join(localpath,'myotr.py')
+		localpath = os.path.join(HEXCHAT_ADDONS_DIR,'myotr.py')
 		
 		try:
 			with open(localpath, 'rb') as file:
