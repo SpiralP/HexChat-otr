@@ -3,8 +3,7 @@ __module_author__ = 'SpiralP'
 __module_version__ = '1'
 __module_description__ = 'OTR for HexChat'
 
-import sys
-import os
+import sys, os
 
 import urllib2
 import hashlib
