@@ -137,7 +137,6 @@ def updateCheck():
 		except:
 			warn('Error reading local file!')
 			return False
-		file.close()
 		
 		remotehash = hashlib.sha1(remotedata).hexdigest()
 		localhash = hashlib.sha1(localdata).hexdigest()
@@ -302,7 +301,6 @@ class MyAccount(potr.context.Account):
 				if account == self.name:
 					info('trusting %s %s' % (fingerprint,trust))
 					self.setTrust(context, fingerprint, trust)
-			file.close()
 		
 		return
 	def saveTrusts(self):
@@ -318,7 +316,6 @@ class MyAccount(potr.context.Account):
 						)
 					)
 					file.write('\n')
-			file.close()
 		
 		return
 
