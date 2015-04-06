@@ -88,7 +88,13 @@ def first_instance(objs, Class):
 		if isinstance(obj, Class):
 			return obj
 
+def message(who,msg):
+	hexchat.prnt('[OTR] {}\t{}'.format(who,msg))
+	
+
+
 def getAccount(id=None):
+	name = False
 	if id is None:
 		name = hexchat.get_info('nick')
 		if name is None:
@@ -102,7 +108,7 @@ def getAccount(id=None):
 	
 	if id not in accounts:
 		hexchat.prnt(BLUE+'Creating new account for: %s' % id)
-		accounts[id] = MyAccount(id)
+		accounts[id] = MyAccount(id,name)
 	
 	return accounts[id]
 def getChannel():
@@ -129,7 +135,7 @@ def updateCheck():
 		remotedata = http.read()
 		http.close()
 		
-		localpath = os.path.join(HEXCHAT_ADDONS_DIR,'myotr.py')
+		localpath = os.path.join(HEXCHAT_ADDONS_DIR,__module_name__+'.py')
 		
 		try:
 			with open(localpath, 'rb') as file:
@@ -252,9 +258,12 @@ class MyAccount(potr.context.Account):
 	#important lol
 	contextclass = MyContext
 	
-	def __init__(self, id):
+	def __init__(self, id, myname=False):
 		global PROTOCOL, MMS
 		super(MyAccount, self).__init__(id, PROTOCOL, MMS)
+		if not myname:
+			myname = id
+		self.myname = myname
 		
 		if not os.path.exists(OTR_DIR):
 			info('Creating new directory: %s' % OTR_DIR)
@@ -345,7 +354,7 @@ def message_callback(word, word_eol, userdata):
 	if msg is None:
 		return hexchat.EAT_ALL
 	
-	hexchat.prnt(BLUE+'<-'+msg)
+	message(BLUE+chan,msg)
 	
 	return hexchat.EAT_ALL
 
@@ -377,7 +386,7 @@ def keypress(word, word_eol, userdata):
 	context = account.getContext(chan)
 	
 	if context.state==potr.context.STATE_ENCRYPTED:
-		hexchat.prnt(BLUE + '->' + msg)
+		message(account.myname,msg)
 		context.sendMessage(0,msg)
 		
 		hexchat.command('settext') # the hacks
