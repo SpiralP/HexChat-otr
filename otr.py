@@ -500,6 +500,10 @@ hexchat.hook_print('Private Message to Dialog',message_callback)
 hexchat.hook_print('Key Press',keypress)
 hexchat.hook_command('otr',command_callback)
 
+def unload_callback(userdata):
+	info('Unloading {}'.format(__module_name__))
+hexchat.hook_unload(unload_callback)
+
 print('%s version %s loaded.' % (__module_name__,__module_version__))
 
 
