@@ -417,12 +417,12 @@ def command_callback(word, word_eol, userdata):
 	cmd = len(word)>1 and word[1] or ''
 	
 	
-	if   cmd=='go':
+	if   cmd=='go' or cmd=='start' or cmd='init':
 		
 		say(context.peer,context.sendMessage(0,'?OTR?')) # this will actually send the correct version-query
 		info('Query Sent...')
 		
-	elif cmd=='stop':
+	elif cmd=='stop' or cmd=='finish':
 		
 		context.disconnect()
 		
